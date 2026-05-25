@@ -1,41 +1,29 @@
 package main
-
 import (
 	"fmt"
 	"strings"
 )
-// raysa coba
-const MAX = 100
 
+const MAX = 100
 type Meja struct {
 	NoMeja, Kapasitas, Frekuensi int
-	Status                       string
+	Status string
 }
-
 type Pelanggan struct {
-	ID         int
+	ID int
 	Nama, NoHP string
 }
-
 type Reservasi struct {
 	IDReservasi, IDPelanggan, NoMeja int
-	Tanggal, Jam                     string
+	Tanggal, Jam string
 }
 
 var dataMeja [MAX]Meja
 var dataPelanggan [MAX]Pelanggan
 var dataReservasi [MAX]Reservasi
-var jumlahMeja int
-var jumlahPelanggan int
-var jumlahReservasi int
-
-// ===================== MENU =====================
+var jumlahMeja, jumlahPelanggan, jumlahReservasi int
 
 func main() {
-	menuUtama()
-}
-
-func menuUtama() {
 	var pilihan int
 	for pilihan != 9 {
 		fmt.Println("\n===== APLIKASI RESERVASI RESTORAN =====")
@@ -70,19 +58,14 @@ func menuUtama() {
 	}
 }
 
-// ===================== DATA MEJA =====================
-
 func tambahMeja() {
 	if jumlahMeja < MAX {
 		fmt.Print("Nomor meja: ")
 		fmt.Scan(&dataMeja[jumlahMeja].NoMeja)
-
 		fmt.Print("Kapasitas kursi: ")
 		fmt.Scan(&dataMeja[jumlahMeja].Kapasitas)
-
 		dataMeja[jumlahMeja].Status = "Kosong"
 		dataMeja[jumlahMeja].Frekuensi = 0
-
 		jumlahMeja++
 		fmt.Println("Data meja berhasil ditambahkan")
 	}
@@ -90,14 +73,12 @@ func tambahMeja() {
 
 func tampilMeja() {
 	var i int
-
-	fmt.Println("\n===== DATA MEJA =====")
+	fmt.Println("===== DATA MEJA =====")
 	for i < jumlahMeja {
 		fmt.Println("No Meja     :", dataMeja[i].NoMeja)
 		fmt.Println("Kapasitas   :", dataMeja[i].Kapasitas)
 		fmt.Println("Status      :", dataMeja[i].Status)
 		fmt.Println("Frekuensi   :", dataMeja[i].Frekuensi)
-		fmt.Println("---------------------------")
 		i++
 	}
 }
@@ -105,19 +86,14 @@ func tampilMeja() {
 func editMeja() {
 	var no int
 	var idx int
-
 	fmt.Print("Masukkan nomor meja yang ingin diubah: ")
 	fmt.Scan(&no)
-
 	idx = sequentialSearchMeja(no)
-
 	if idx != -1 {
 		fmt.Print("Kapasitas baru: ")
 		fmt.Scan(&dataMeja[idx].Kapasitas)
-
 		fmt.Print("Status baru: ")
 		fmt.Scan(&dataMeja[idx].Status)
-
 		fmt.Println("Data berhasil diubah")
 	} else {
 		fmt.Println("Meja tidak ditemukan")
@@ -128,20 +104,15 @@ func hapusMeja() {
 	var no int
 	var idx int
 	var i int
-
 	fmt.Print("Masukkan nomor meja yang ingin dihapus: ")
 	fmt.Scan(&no)
-
 	idx = sequentialSearchMeja(no)
-
 	if idx != -1 {
 		i = idx
-
 		for i < jumlahMeja-1 {
 			dataMeja[i] = dataMeja[i+1]
 			i++
 		}
-
 		jumlahMeja--
 		fmt.Println("Data berhasil dihapus")
 	} else {
@@ -149,11 +120,8 @@ func hapusMeja() {
 	}
 }
 
-// ===================== DATA PELANGGAN =====================
-
 func menuPelanggan() {
 	var pilih int
-
 	for pilih != 5 {
 		fmt.Println("\n===== MENU PELANGGAN =====")
 		fmt.Println("1. Tambah Pelanggan")
@@ -163,7 +131,6 @@ func menuPelanggan() {
 		fmt.Println("5. Kembali")
 		fmt.Print("Pilih: ")
 		fmt.Scan(&pilih)
-
 		if pilih == 1 {
 			tambahPelanggan()
 		} else if pilih == 2 {
@@ -180,13 +147,10 @@ func tambahPelanggan() {
 	if jumlahPelanggan < MAX {
 		fmt.Print("ID Pelanggan: ")
 		fmt.Scan(&dataPelanggan[jumlahPelanggan].ID)
-
 		fmt.Print("Nama: ")
 		fmt.Scan(&dataPelanggan[jumlahPelanggan].Nama)
-
 		fmt.Print("No HP: ")
 		fmt.Scan(&dataPelanggan[jumlahPelanggan].NoHP)
-
 		jumlahPelanggan++
 		fmt.Println("Data pelanggan berhasil ditambahkan")
 	}
@@ -194,9 +158,7 @@ func tambahPelanggan() {
 
 func tampilPelanggan() {
 	var i int
-
 	fmt.Println("\n===== DATA PELANGGAN =====")
-
 	for i < jumlahPelanggan {
 		fmt.Println("ID      :", dataPelanggan[i].ID)
 		fmt.Println("Nama    :", dataPelanggan[i].Nama)
@@ -209,19 +171,14 @@ func tampilPelanggan() {
 func editPelanggan() {
 	var id int
 	var idx int
-
 	fmt.Print("Masukkan ID pelanggan: ")
 	fmt.Scan(&id)
-
 	idx = cariPelanggan(id)
-
 	if idx != -1 {
 		fmt.Print("Nama baru: ")
 		fmt.Scan(&dataPelanggan[idx].Nama)
-
 		fmt.Print("No HP baru: ")
 		fmt.Scan(&dataPelanggan[idx].NoHP)
-
 		fmt.Println("Data berhasil diubah")
 	} else {
 		fmt.Println("Data tidak ditemukan")
@@ -232,20 +189,15 @@ func hapusPelanggan() {
 	var id int
 	var idx int
 	var i int
-
 	fmt.Print("Masukkan ID pelanggan: ")
 	fmt.Scan(&id)
-
 	idx = cariPelanggan(id)
-
 	if idx != -1 {
 		i = idx
-
 		for i < jumlahPelanggan-1 {
 			dataPelanggan[i] = dataPelanggan[i+1]
 			i++
 		}
-
 		jumlahPelanggan--
 		fmt.Println("Data berhasil dihapus")
 	} else {
@@ -256,22 +208,17 @@ func hapusPelanggan() {
 func cariPelanggan(id int) int {
 	var i int
 	var idx int = -1
-
 	for i < jumlahPelanggan {
 		if dataPelanggan[i].ID == id {
 			idx = i
 		}
 		i++
 	}
-
 	return idx
 }
 
-// ===================== RESERVASI =====================
-
 func menuReservasi() {
 	var pilih int
-
 	for pilih != 3 {
 		fmt.Println("\n===== MENU RESERVASI =====")
 		fmt.Println("1. Tambah Reservasi")
@@ -279,7 +226,6 @@ func menuReservasi() {
 		fmt.Println("3. Kembali")
 		fmt.Print("Pilih: ")
 		fmt.Scan(&pilih)
-
 		if pilih == 1 {
 			tambahReservasi()
 		} else if pilih == 2 {
@@ -292,32 +238,23 @@ func tambahReservasi() {
 	if jumlahReservasi < MAX {
 		fmt.Print("ID Reservasi: ")
 		fmt.Scan(&dataReservasi[jumlahReservasi].IDReservasi)
-
 		fmt.Print("ID Pelanggan: ")
 		fmt.Scan(&dataReservasi[jumlahReservasi].IDPelanggan)
-
 		fmt.Print("Nomor Meja: ")
 		fmt.Scan(&dataReservasi[jumlahReservasi].NoMeja)
-
 		fmt.Print("Tanggal (dd-mm-yyyy): ")
 		fmt.Scan(&dataReservasi[jumlahReservasi].Tanggal)
-
 		fmt.Print("Jam: ")
 		fmt.Scan(&dataReservasi[jumlahReservasi].Jam)
-
 		updateStatusMeja(dataReservasi[jumlahReservasi].NoMeja)
-
 		jumlahReservasi++
-
 		fmt.Println("Reservasi berhasil ditambahkan")
 	}
 }
 
 func tampilReservasi() {
 	var i int
-
 	fmt.Println("\n===== DATA RESERVASI =====")
-
 	for i < jumlahReservasi {
 		fmt.Println("ID Reservasi :", dataReservasi[i].IDReservasi)
 		fmt.Println("ID Pelanggan :", dataReservasi[i].IDPelanggan)
@@ -331,29 +268,23 @@ func tampilReservasi() {
 
 func updateStatusMeja(no int) {
 	var idx int
-
 	idx = sequentialSearchMeja(no)
-
 	if idx != -1 {
 		dataMeja[idx].Status = "Dipesan"
 		dataMeja[idx].Frekuensi++
 	}
 }
 
-// ===================== SEARCHING =====================
-
 // Sequential Search
 func sequentialSearchMeja(no int) int {
 	var i int
 	var idx int = -1
-
 	for i < jumlahMeja {
 		if dataMeja[i].NoMeja == no {
 			idx = i
 		}
 		i++
 	}
-
 	return idx
 }
 
@@ -363,12 +294,9 @@ func binarySearchMeja(no int) int {
 	var right int = jumlahMeja - 1
 	var mid int
 	var idx int = -1
-
 	sortMejaNoAsc()
-
 	for left <= right {
 		mid = (left + right) / 2
-
 		if dataMeja[mid].NoMeja == no {
 			idx = mid
 			left = right + 1
@@ -378,7 +306,6 @@ func binarySearchMeja(no int) int {
 			right = mid - 1
 		}
 	}
-
 	return idx
 }
 
@@ -386,22 +313,18 @@ func menuCariMeja() {
 	var pilih int
 	var no int
 	var idx int
-
 	fmt.Println("\n===== CARI MEJA =====")
 	fmt.Println("1. Sequential Search")
 	fmt.Println("2. Binary Search")
 	fmt.Print("Pilih: ")
 	fmt.Scan(&pilih)
-
 	fmt.Print("Masukkan nomor meja: ")
 	fmt.Scan(&no)
-
 	if pilih == 1 {
 		idx = sequentialSearchMeja(no)
 	} else if pilih == 2 {
 		idx = binarySearchMeja(no)
 	}
-
 	if idx != -1 {
 		fmt.Println("Meja ditemukan")
 		fmt.Println("Nomor     :", dataMeja[idx].NoMeja)
@@ -412,97 +335,74 @@ func menuCariMeja() {
 	}
 }
 
-// ===================== SORTING =====================
-
 // Selection Sort Ascending
 func selectionSortKapasitasAsc() {
 	var i, j, min int
 	var temp Meja
-
 	i = 0
-
 	for i < jumlahMeja-1 {
 		min = i
 		j = i + 1
-
 		for j < jumlahMeja {
 			if dataMeja[j].Kapasitas < dataMeja[min].Kapasitas {
 				min = j
 			}
 			j++
 		}
-
 		temp = dataMeja[i]
 		dataMeja[i] = dataMeja[min]
 		dataMeja[min] = temp
-
 		i++
 	}
 }
 
-// Selection Sort Descending
 func selectionSortKapasitasDesc() {
 	var i, j, max int
 	var temp Meja
-
 	i = 0
-
 	for i < jumlahMeja-1 {
 		max = i
 		j = i + 1
-
 		for j < jumlahMeja {
 			if dataMeja[j].Kapasitas > dataMeja[max].Kapasitas {
 				max = j
 			}
 			j++
 		}
-
 		temp = dataMeja[i]
 		dataMeja[i] = dataMeja[max]
 		dataMeja[max] = temp
-
 		i++
 	}
 }
 
-// Insertion Sort Ascending
 func insertionSortKapasitasAsc() {
 	var i, j int
 	var temp Meja
-
 	i = 1
-
 	for i < jumlahMeja {
 		temp = dataMeja[i]
 		j = i - 1
-
 		for j >= 0 && dataMeja[j].Kapasitas > temp.Kapasitas {
 			dataMeja[j+1] = dataMeja[j]
 			j--
 		}
-
 		dataMeja[j+1] = temp
 		i++
 	}
 }
 
-// Insertion Sort Descending
 func insertionSortKapasitasDesc() {
 	var i, j int
 	var temp Meja
-
 	i = 1
-
 	for i < jumlahMeja {
 		temp = dataMeja[i]
 		j = i - 1
-
 		for j >= 0 && dataMeja[j].Kapasitas < temp.Kapasitas {
 			dataMeja[j+1] = dataMeja[j]
 			j--
 		}
-
 		dataMeja[j+1] = temp
 		i++
 	}
@@ -511,18 +411,14 @@ func insertionSortKapasitasDesc() {
 func sortMejaNoAsc() {
 	var i, j int
 	var temp Meja
-
 	i = 1
-
 	for i < jumlahMeja {
 		temp = dataMeja[i]
 		j = i - 1
-
 		for j >= 0 && dataMeja[j].NoMeja > temp.NoMeja {
 			dataMeja[j+1] = dataMeja[j]
 			j--
 		}
-
 		dataMeja[j+1] = temp
 		i++
 	}
@@ -530,7 +426,6 @@ func sortMejaNoAsc() {
 
 func menuTampilMeja() {
 	var pilih int
-
 	fmt.Println("\n===== SORTING DATA MEJA =====")
 	fmt.Println("1. Selection Sort Ascending")
 	fmt.Println("2. Selection Sort Descending")
@@ -538,7 +433,6 @@ func menuTampilMeja() {
 	fmt.Println("4. Insertion Sort Descending")
 	fmt.Print("Pilih: ")
 	fmt.Scan(&pilih)
-
 	if pilih == 1 {
 		selectionSortKapasitasAsc()
 	} else if pilih == 2 {
@@ -552,21 +446,16 @@ func menuTampilMeja() {
 	tampilMeja()
 }
 
-// ===================== STATISTIK =====================
-
 func statistik() {
 	var i, j int
 	var tanggal [MAX]string
 	var jumlah [MAX]int
 	var banyakTanggal int
 	var ditemukan bool
-
 	fmt.Println("\n===== STATISTIK RESERVASI =====")
-
 	for i < jumlahReservasi {
 		ditemukan = false
 		j = 0
-
 		for j < banyakTanggal {
 			if strings.ToLower(tanggal[j]) == strings.ToLower(dataReservasi[i].Tanggal) {
 				jumlah[j]++
@@ -574,16 +463,13 @@ func statistik() {
 			}
 			j++
 		}
-
 		if ditemukan == false {
 			tanggal[banyakTanggal] = dataReservasi[i].Tanggal
 			jumlah[banyakTanggal] = 1
 			banyakTanggal++
 		}
-
 		i++
 	}
-
 	i = 0
 	for i < banyakTanggal {
 		fmt.Println("Tanggal :", tanggal[i])
@@ -591,23 +477,19 @@ func statistik() {
 		fmt.Println("----------------------")
 		i++
 	}
-
 	mejaTerlaris()
 }
 
 func mejaTerlaris() {
 	var i int
 	var max int = 0
-
 	i = 1
-
 	for i < jumlahMeja {
 		if dataMeja[i].Frekuensi > dataMeja[max].Frekuensi {
 			max = i
 		}
 		i++
 	}
-
 	if jumlahMeja > 0 {
 		fmt.Println("Meja paling sering dipesan:")
 		fmt.Println("Nomor Meja :", dataMeja[max].NoMeja)
