@@ -1,23 +1,27 @@
 package main
+
 import (
 	"fmt"
 	"strings"
 )
 
+//ini diva
+
 const MAX = 100
+
 type Meja struct {
 	NoMeja, Kapasitas, Frekuensi int
-	Status string
+	Status                       string
 }
 
 type Pelanggan struct {
-	ID int
+	ID         int
 	Nama, NoHP string
 }
 
 type Reservasi struct {
 	IDReservasi, IDPelanggan, NoMeja int
-	Tanggal, Jam string
+	Tanggal, Jam                     string
 }
 
 var dataMeja [MAX]Meja
