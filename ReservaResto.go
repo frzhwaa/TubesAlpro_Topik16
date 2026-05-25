@@ -5,8 +5,6 @@ import (
 	"strings"
 )
 
-//ini diva
-// coba raysa
 const MAX = 100
 
 type Meja struct {
