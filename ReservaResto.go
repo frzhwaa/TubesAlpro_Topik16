@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 )
-
+// raysa coba
 const MAX = 100
 
 type Meja struct {
