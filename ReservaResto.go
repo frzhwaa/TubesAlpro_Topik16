@@ -316,7 +316,7 @@ func menuReservasi() {
 }
 
 func tambahReservasi() {
-	var ditemukan bool
+	var ditemukan, bentrok bool
 	var idRes, idPel, nomorMeja int
 	var tanggal, jam string
 	fmt.Print("ID Reservasi : ")
@@ -334,20 +334,27 @@ func tambahReservasi() {
 	for i := 0; i < jumlah && !ditemukan; i++ {
 		if dataMeja[i].Nomor == nomorMeja {
 			ditemukan = true
-			if dataMeja[i].Tersedia {
-				n := jumlahReservasi()
+			bentrok = false
+			n := jumlahReservasi()
+			for j := 0; j < n && !bentrok; j++ {
+				if dataReservasi[j].NomorMeja == nomorMeja &&
+					dataReservasi[j].Tanggal == tanggal &&
+					dataReservasi[j].Jam == jam {
+					bentrok = true
+				}
+			}
+			if bentrok {
+				fmt.Println("Meja sudah dipesan pada tanggal dan jam tersebut")
+			} else {
 				if n < MAX {
 					dataReservasi[n].IDReservasi = idRes
 					dataReservasi[n].IDPelanggan = idPel
 					dataReservasi[n].NomorMeja = nomorMeja
 					dataReservasi[n].Tanggal = tanggal
 					dataReservasi[n].Jam = jam
-					dataMeja[i].Tersedia = false
 					dataMeja[i].JumlahPesan++
 					fmt.Println("Reservasi berhasil ditambahkan")
 				}
-			} else {
-				fmt.Println("Meja sedang digunakan")
 			}
 		}
 	}
