@@ -414,23 +414,87 @@ func cekKetersediaanMeja() {
 }
 
 func statistik() {
-	var hitung, mejaTerlaris, jumlahTerbanyak int
 	n := jumlahReservasi()
-	jumlahTerbanyak = 0
-	mejaTerlaris = 0
+
+	fmt.Println("\n===== STATISTIK =====")
+
+	if n == 0 {
+		fmt.Println("Belum ada data reservasi")
+		return
+	}
+
 	for i := 0; i < n; i++ {
-		hitung = 0
-		for j := 0; j < n; j++ {
-			if dataReservasi[i].NomorMeja == dataReservasi[j].NomorMeja {
-				hitung++
+		sudahDitampilkan := false
+
+		for j := 0; j < i; j++ {
+			if dataReservasi[j].Tanggal == dataReservasi[i].Tanggal {
+				sudahDitampilkan = true
 			}
 		}
-		if hitung > jumlahTerbanyak {
-			jumlahTerbanyak = hitung
-			mejaTerlaris = dataReservasi[i].NomorMeja
+
+		if !sudahDitampilkan {
+			tanggal := dataReservasi[i].Tanggal
+			totalReservasi := 0
+			jumlahTerbanyak := 0
+
+			for j := 0; j < n; j++ {
+				if dataReservasi[j].Tanggal == tanggal {
+					totalReservasi++
+
+					hitung := 0
+					for k := 0; k < n; k++ {
+						if dataReservasi[k].Tanggal == tanggal &&
+							dataReservasi[k].NomorMeja == dataReservasi[j].NomorMeja {
+							hitung++
+						}
+					}
+
+					if hitung > jumlahTerbanyak {
+						jumlahTerbanyak = hitung
+					}
+				}
+			}
+
+			fmt.Println("Tanggal :", tanggal)
+			fmt.Println("Total reservasi :", totalReservasi)
+			fmt.Print("Meja paling sering dipesan : ")
+
+			jumlahSeri := 0
+
+			for j := 0; j < n; j++ {
+				if dataReservasi[j].Tanggal == tanggal {
+					sudahDicetak := false
+
+					for k := 0; k < j; k++ {
+						if dataReservasi[k].Tanggal == tanggal &&
+							dataReservasi[k].NomorMeja == dataReservasi[j].NomorMeja {
+							sudahDicetak = true
+						}
+					}
+
+					if !sudahDicetak {
+						hitung := 0
+
+						for k := 0; k < n; k++ {
+							if dataReservasi[k].Tanggal == tanggal &&
+								dataReservasi[k].NomorMeja == dataReservasi[j].NomorMeja {
+								hitung++
+							}
+						}
+
+						if hitung == jumlahTerbanyak {
+							fmt.Print(dataReservasi[j].NomorMeja, " ")
+							jumlahSeri++
+						}
+					}
+				}
+			}
+
+			fmt.Println()
+			fmt.Println("Jumlah pesanan meja tersebut :", jumlahTerbanyak)
+
+
+			fmt.Println("---------------------------")
 		}
 	}
-	fmt.Println("\n===== STATISTIK =====")
-	fmt.Println("Meja paling sering dipesan :", mejaTerlaris)
-	fmt.Println("Jumlah reservasi :", jumlahTerbanyak)
 }
