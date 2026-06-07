@@ -1,22 +1,20 @@
 package main
-
 import "fmt"
 
 const MAX = 100
 
 type Meja struct {
 	Nomor, Kapasitas, JumlahPesan int
-	Tersedia                      bool
 }
 
 type Pelanggan struct {
-	ID         int
+	ID int
 	Nama, NoHP string
 }
 
 type Reservasi struct {
-	IDReservasi, IDPelanggan, NomorMeja int
-	Tanggal, Jam                        string
+	IDReservasi, IDPelanggan, NomorMeja, Durasi int
+	Tanggal, Jam string
 }
 
 var dataMeja [MAX]Meja
@@ -102,7 +100,6 @@ func tambahMeja() {
 		dataMeja[n].Nomor = nomor
 		fmt.Print("Kapasitas : ")
 		fmt.Scan(&dataMeja[n].Kapasitas)
-		dataMeja[n].Tersedia = true
 		dataMeja[n].JumlahPesan = 0
 		fmt.Println("Data meja berhasil ditambahkan")
 	}
@@ -114,11 +111,6 @@ func tampilMeja() {
 	for i := 0; i < n; i++ {
 		fmt.Println("Nomor meja :", dataMeja[i].Nomor)
 		fmt.Println("Kapasitas  :", dataMeja[i].Kapasitas)
-		if dataMeja[i].Tersedia {
-			fmt.Println("Status     : Tersedia")
-		} else {
-			fmt.Println("Status     : Dipesan")
-		}
 		fmt.Println("Jumlah Pesan :", dataMeja[i].JumlahPesan)
 		fmt.Println("---------------------------")
 	}
@@ -301,7 +293,7 @@ func menuReservasi() {
 		fmt.Println("\n===== MENU RESERVASI =====")
 		fmt.Println("1. Tambah Reservasi")
 		fmt.Println("2. Tampil Reservasi")
-		fmt.Println("3. Kosongkan Meja")
+		fmt.Println("3. Cek Ketersediaan Meja")
 		fmt.Println("4. Kembali")
 		fmt.Print("Pilih : ")
 		fmt.Scan(&pilih)
@@ -310,14 +302,14 @@ func menuReservasi() {
 		} else if pilih == 2 {
 			tampilReservasi()
 		} else if pilih == 3 {
-			kosongkanMeja()
+			cekKetersediaanMeja()
 		}
 	}
 }
 
 func tambahReservasi() {
 	var ditemukan, bentrok bool
-	var idRes, idPel, nomorMeja int
+	var idRes, idPel, nomorMeja, durasi int
 	var tanggal, jam string
 	fmt.Print("ID Reservasi : ")
 	fmt.Scan(&idRes)
@@ -329,22 +321,32 @@ func tambahReservasi() {
 	fmt.Scan(&tanggal)
 	fmt.Print("Jam : ")
 	fmt.Scan(&jam)
+	fmt.Print("Durasi (menit) : ")
+	fmt.Scan(&durasi)
+	jamBaru, menitBaru := 0, 0
+	fmt.Sscanf(jam, "%d:%d", &jamBaru, &menitBaru)
+	waktuBaruMulai := jamBaru*60 + menitBaru
+	waktuBaruSelesai := waktuBaruMulai + durasi
 	jumlah := jumlahMeja()
 	ditemukan = false
 	for i := 0; i < jumlah && !ditemukan; i++ {
 		if dataMeja[i].Nomor == nomorMeja {
 			ditemukan = true
-			bentrok = false
 			n := jumlahReservasi()
+			bentrok = false
 			for j := 0; j < n && !bentrok; j++ {
-				if dataReservasi[j].NomorMeja == nomorMeja &&
-					dataReservasi[j].Tanggal == tanggal &&
-					dataReservasi[j].Jam == jam {
-					bentrok = true
+				if dataReservasi[j].NomorMeja == nomorMeja && dataReservasi[j].Tanggal == tanggal {
+					jamLama, menitLama := 0, 0
+					fmt.Sscanf(dataReservasi[j].Jam, "%d:%d", &jamLama, &menitLama)
+					waktuLamaMulai := jamLama*60 + menitLama
+					waktuLamaSelesai := waktuLamaMulai + dataReservasi[j].Durasi + 1
+					if waktuBaruMulai < waktuLamaSelesai && waktuBaruSelesai > waktuLamaMulai {
+						bentrok = true
+					}
 				}
 			}
 			if bentrok {
-				fmt.Println("Meja sudah dipesan pada tanggal dan jam tersebut")
+				fmt.Println("Meja sudah dipesan pada rentang waktu tersebut")
 			} else {
 				if n < MAX {
 					dataReservasi[n].IDReservasi = idRes
@@ -352,6 +354,7 @@ func tambahReservasi() {
 					dataReservasi[n].NomorMeja = nomorMeja
 					dataReservasi[n].Tanggal = tanggal
 					dataReservasi[n].Jam = jam
+					dataReservasi[n].Durasi = durasi
 					dataMeja[i].JumlahPesan++
 					fmt.Println("Reservasi berhasil ditambahkan")
 				}
@@ -372,28 +375,46 @@ func tampilReservasi() {
 		fmt.Println("Nomor Meja   :", dataReservasi[i].NomorMeja)
 		fmt.Println("Tanggal      :", dataReservasi[i].Tanggal)
 		fmt.Println("Jam          :", dataReservasi[i].Jam)
+		fmt.Println("Durasi       :", dataReservasi[i].Durasi, "menit")
 		fmt.Println("---------------------------")
 	}
 }
 
-func kosongkanMeja() {
-	var nomor int
-	var ketemu bool
-	n := jumlahMeja()
-	fmt.Print("Masukkan nomor meja : ")
-	fmt.Scan(&nomor)
-	i := 0
-	ketemu = false
-	for i < n && !ketemu {
-		if dataMeja[i].Nomor == nomor {
-			dataMeja[i].Tersedia = true
-			fmt.Println("Meja berhasil dikosongkan")
-			ketemu = true
+func cekKetersediaanMeja() {
+	var nomorMeja, durasi int
+	var tanggal, jam string
+	var bentrok bool
+	fmt.Print("Nomor Meja : ")
+	fmt.Scan(&nomorMeja)
+	fmt.Print("Tanggal : ")
+	fmt.Scan(&tanggal)
+	fmt.Print("Jam : ")
+	fmt.Scan(&jam)
+	fmt.Print("Durasi (menit) : ")
+	fmt.Scan(&durasi)
+	jamBaru, menitBaru := 0, 0
+	fmt.Sscanf(jam, "%d:%d", &jamBaru, &menitBaru)
+	waktuMulai := jamBaru*60 + menitBaru
+	waktuSelesai := waktuMulai + durasi
+	bentrok = false
+	n := jumlahReservasi()
+	for i := 0; i < n && !bentrok; i++ {
+		if dataReservasi[i].NomorMeja == nomorMeja &&
+			dataReservasi[i].Tanggal == tanggal {
+			jamLama, menitLama := 0, 0
+			fmt.Sscanf(dataReservasi[i].Jam, "%d:%d", &jamLama, &menitLama)
+			waktuLamaMulai := jamLama*60 + menitLama
+			waktuLamaSelesai := waktuLamaMulai + dataReservasi[i].Durasi + 1
+			if waktuMulai < waktuLamaSelesai &&
+				waktuSelesai > waktuLamaMulai {
+				bentrok = true
+			}
 		}
-		i++
 	}
-	if !ketemu {
-		fmt.Println("Meja tidak ditemukan")
+	if bentrok {
+		fmt.Println("Meja tidak tersedia")
+	} else {
+		fmt.Println("Meja tersedia")
 	}
 }
 
