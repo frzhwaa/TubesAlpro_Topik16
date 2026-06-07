@@ -1,21 +1,22 @@
 package main
+
 import "fmt"
 
 const MAX = 100
 
 type Meja struct {
 	Nomor, Kapasitas, JumlahPesan int
-	Tersedia bool
+	Tersedia                      bool
 }
 
 type Pelanggan struct {
-	ID int
+	ID         int
 	Nama, NoHP string
 }
 
 type Reservasi struct {
 	IDReservasi, IDPelanggan, NomorMeja int
-	Tanggal, Jam string
+	Tanggal, Jam                        string
 }
 
 var dataMeja [MAX]Meja
@@ -80,7 +81,6 @@ func jumlahPelanggan() int {
 	}
 	return i
 }
-
 
 func tambahMeja() {
 	n := jumlahMeja()
@@ -317,37 +317,42 @@ func menuReservasi() {
 
 func tambahReservasi() {
 	var ditemukan bool
-	n := jumlahReservasi()
+	var idRes, idPel, nomorMeja int
+	var tanggal, jam string
+	fmt.Print("ID Reservasi : ")
+	fmt.Scan(&idRes)
+	fmt.Print("ID Pelanggan : ")
+	fmt.Scan(&idPel)
+	fmt.Print("Nomor Meja : ")
+	fmt.Scan(&nomorMeja)
+	fmt.Print("Tanggal : ")
+	fmt.Scan(&tanggal)
+	fmt.Print("Jam : ")
+	fmt.Scan(&jam)
 	jumlah := jumlahMeja()
-	if n < MAX {
-		fmt.Print("ID Reservasi : ")
-		fmt.Scan(&dataReservasi[n].IDReservasi)
-		fmt.Print("ID Pelanggan : ")
-		fmt.Scan(&dataReservasi[n].IDPelanggan)
-		fmt.Print("Nomor Meja : ")
-		fmt.Scan(&dataReservasi[n].NomorMeja)
-		fmt.Print("Tanggal : ")
-		fmt.Scan(&dataReservasi[n].Tanggal)
-		fmt.Print("Jam : ")
-		fmt.Scan(&dataReservasi[n].Jam)
-		i := 0
-		ditemukan = false
-		for i < jumlah && !ditemukan {
-			if dataMeja[i].Nomor == dataReservasi[n].NomorMeja {
-				if dataMeja[i].Tersedia {
+	ditemukan = false
+	for i := 0; i < jumlah && !ditemukan; i++ {
+		if dataMeja[i].Nomor == nomorMeja {
+			ditemukan = true
+			if dataMeja[i].Tersedia {
+				n := jumlahReservasi()
+				if n < MAX {
+					dataReservasi[n].IDReservasi = idRes
+					dataReservasi[n].IDPelanggan = idPel
+					dataReservasi[n].NomorMeja = nomorMeja
+					dataReservasi[n].Tanggal = tanggal
+					dataReservasi[n].Jam = jam
 					dataMeja[i].Tersedia = false
 					dataMeja[i].JumlahPesan++
 					fmt.Println("Reservasi berhasil ditambahkan")
-				} else {
-					fmt.Println("Meja sedang digunakan")
 				}
-				ditemukan = true
+			} else {
+				fmt.Println("Meja sedang digunakan")
 			}
-			i++
 		}
-		if !ditemukan {
-			fmt.Println("Nomor meja tidak ditemukan")
-		}
+	}
+	if !ditemukan {
+		fmt.Println("Nomor meja tidak ditemukan")
 	}
 }
 
