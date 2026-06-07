@@ -81,11 +81,25 @@ func jumlahPelanggan() int {
 	return i
 }
 
+
 func tambahMeja() {
 	n := jumlahMeja()
 	if n < MAX {
+		var nomor int
+		var sudahAda bool
 		fmt.Print("Nomor meja : ")
-		fmt.Scan(&dataMeja[n].Nomor)
+		fmt.Scan(&nomor)
+		sudahAda = false
+		for i := 0; i < n && !sudahAda; i++ {
+			if dataMeja[i].Nomor == nomor {
+				sudahAda = true
+			}
+		}
+		if sudahAda {
+			fmt.Println("Nomor meja sudah terdaftar")
+			return
+		}
+		dataMeja[n].Nomor = nomor
 		fmt.Print("Kapasitas : ")
 		fmt.Scan(&dataMeja[n].Kapasitas)
 		dataMeja[n].Tersedia = true
