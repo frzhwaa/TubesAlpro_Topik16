@@ -381,7 +381,7 @@ func tampilReservasi() {
 }
 
 func cekKetersediaanMeja() {
-	var nomorMeja, durasi int
+	var nomorMeja int
 	var tanggal, jam string
 	var bentrok bool
 	fmt.Print("Nomor Meja : ")
@@ -390,23 +390,18 @@ func cekKetersediaanMeja() {
 	fmt.Scan(&tanggal)
 	fmt.Print("Jam : ")
 	fmt.Scan(&jam)
-	fmt.Print("Durasi (menit) : ")
-	fmt.Scan(&durasi)
-	jamBaru, menitBaru := 0, 0
-	fmt.Sscanf(jam, "%d:%d", &jamBaru, &menitBaru)
-	waktuMulai := jamBaru*60 + menitBaru
-	waktuSelesai := waktuMulai + durasi
+	jamCek, menitCek := 0, 0
+	fmt.Sscanf(jam, "%d:%d", &jamCek, &menitCek)
+	waktuCek := jamCek*60 + menitCek
 	bentrok = false
 	n := jumlahReservasi()
 	for i := 0; i < n && !bentrok; i++ {
-		if dataReservasi[i].NomorMeja == nomorMeja &&
-			dataReservasi[i].Tanggal == tanggal {
+		if dataReservasi[i].NomorMeja == nomorMeja && dataReservasi[i].Tanggal == tanggal {
 			jamLama, menitLama := 0, 0
 			fmt.Sscanf(dataReservasi[i].Jam, "%d:%d", &jamLama, &menitLama)
-			waktuLamaMulai := jamLama*60 + menitLama
-			waktuLamaSelesai := waktuLamaMulai + dataReservasi[i].Durasi + 1
-			if waktuMulai < waktuLamaSelesai &&
-				waktuSelesai > waktuLamaMulai {
+			waktuMulai := jamLama*60 + menitLama
+			waktuSelesai := waktuMulai + dataReservasi[i].Durasi + 1
+			if waktuCek >= waktuMulai && waktuCek < waktuSelesai {
 				bentrok = true
 			}
 		}
